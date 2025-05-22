@@ -16,9 +16,11 @@ namespace Gameplay
         [SerializeField] private InputActionReference moveInput;
         [SerializeField] private InputActionReference jumpInput;
         [SerializeField] private float airborneSpeedMultiplier = .5f;
+
         //TODO: This booleans are not flexible enough. If we want to have a third jump or other things, it will become a hassle.
-        private bool _isJumping;
-        private bool _isDoubleJumping;
+        //private bool _isJumping;
+        //private bool _isDoubleJumping;
+
         // Strategy
         private IJumpStrategy _jumpStrategy;
         private Character _character;
@@ -57,17 +59,19 @@ namespace Gameplay
                 jumpInput.action.performed -= HandleJumpInput;
         }
 
+        //Strategy 
         private void HandleMoveInput(InputAction.CallbackContext ctx)
         {
             var direction = ctx.ReadValue<Vector2>().ToHorizontalPlane();
-            if (_isJumping || _isDoubleJumping)
+           
+            if (_jumpStrategy.IsJumping)
                 direction *= airborneSpeedMultiplier;
             _character?.SetDirection(direction);
         }
 
         private void HandleJumpInput(InputAction.CallbackContext ctx)
         {
-            //TO-DO: Strategy para el  IJumpStrategy
+            // Strategy para el  IJumpStrategy
             _jumpStrategy.TryJump(ref _jumpCoroutine);
         }
         //TO-DO: This function is barely readable. We need to refactor how we control the jumping
